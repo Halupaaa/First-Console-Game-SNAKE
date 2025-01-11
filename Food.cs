@@ -10,7 +10,6 @@ namespace First_Console_Game_SNAKE
 {
     public class Food
     {
-        public event Action FoodEaten;
         public int FoodX {  get; set; }
         public int FoodY { get; set; }
 
@@ -35,12 +34,14 @@ namespace First_Console_Game_SNAKE
             ++score;
         }
 
-        public void checkIfEaten(Food food)
+        public void DetectFoodEaten(Food food)
         {
-            if (snake.X == FoodX && snake.Y == FoodY)
+            (int X, int Y) head = snake.GetSegments().First();
+
+            if (head.X == FoodX && head.Y == FoodY)
             {
                 generateFood();
-                FoodEaten?.Invoke();
+                snake.AddSegment();
             }
         }
     }
