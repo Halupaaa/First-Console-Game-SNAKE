@@ -11,40 +11,33 @@ namespace First_Console_Game_SNAKE
         Snake snake;
         Food food;
         Area area;
-        FoolSnake foolSnake;
 
         public Game()
         {
             food = new Food();
             area = new Area();
-            snake = new Snake(10, 10);
-            foolSnake = new FoolSnake();
+            snake = new Snake(15, 7);
             snake.getArea(area);
             snake.getFood(food);
-            snake.getFoolSnake(foolSnake);
             area.getFood(food);
             food.getArea(area);
             food.getSnake(snake);
             food.generateFood();
-            foolSnake.getSnake(snake);
-            foolSnake.getFood(food);
-            area.getFoolSnake(foolSnake);
+        }
 
-            food.FoodEaten += OnFoodEaten;
-        }
-        private void OnFoodEaten()
-        {                              
-            foolSnake.AddSegment(snake);
-        }
         public void Start ()
         {
-            while (true)
+            while (!snake.Death())
             {
                 Console.Clear();
-                area.Draw(snake, foolSnake);
-                snake.Move(snake.X, snake.Y);
-                food.checkIfEaten(food);
-
+                area.Draw(snake);
+                snake.Move();
+                food.DetectFoodEaten(food);
+            }
+            if (snake.Death())
+            {
+                Console.Clear();
+                area.DrawGameOverScreen();
             }
         }
     }
