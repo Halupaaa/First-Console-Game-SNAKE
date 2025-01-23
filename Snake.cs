@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 
 namespace First_Console_Game_SNAKE
 {
-    public class Snake
+    class Snake
     {
-        public int X {  get; private set; }
+        public int X { get; private set; }
         public int Y { get; private set; }
 
-        private List<(int X, int Y)> segments = new List<(int X, int Y)>();
+        public List<(int X, int Y)> segments = new ();
+        public bool IsAlive = true;
+        public int speed = 150;
+        public int score = -1; 
 
-        private Area area;
-        private Food food;
+        private Area _area;
 
         public Snake(int x, int y)
         {
@@ -23,69 +25,67 @@ namespace First_Console_Game_SNAKE
             Y = y;
             segments.Add((x, y));
         }
-        public void getArea(Area area)
+        public void SetArea(Area area)
         {
-            this.area = area;
+            _area = area;
         }
 
-        public void getFood (Food food)
-        {
-            this.food = food;
-        }
-        public void PositionOfHead()
-        {
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-
-            switch (keyInfo.Key)
-            {
-                case ConsoleKey.UpArrow:
-                    if (Y == 0) Y = area.YSizeOfArea - 1;
-                    else Y = (Y - 1) % area.YSizeOfArea;
-
-                    break;
-                case ConsoleKey.DownArrow:
-                    Y = (Y + 1) % area.YSizeOfArea;
-                    break;
-                case ConsoleKey.RightArrow:
-                    X = (X + 1) % area.XSizeOfArea;
-                    break;
-                case ConsoleKey.LeftArrow:
-                    if (X == 0) X = area.XSizeOfArea - 1;
-                    else X = (X - 1) % area.XSizeOfArea;
-                    break;       
-            }
-            segments[0] = (X, Y);
-        }
         public void AddSegment()
         {
             segments.Add(segments.Last());
+            score++;
         }
 
-        public List<(int X, int Y)> GetSegments()
+        public void PositionOfHead(ConsoleKey? key)
         {
-            return segments;
-        }
-
-        public void Move ()
-        {
-            for (int i = GetSegments().Count - 1; i > 0; i--)
+            switch (key)
             {
-                GetSegments()[i] = GetSegments()[i - 1];
+                case ConsoleKey.UpArrow:
+                    Y--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    Y++;
+                    break;
+                case ConsoleKey.RightArrow:
+                    X++;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    X--;
+                    break;
             }
-            PositionOfHead();
+            segments[0] = (X, Y);
+        }
+
+        public void Move(ConsoleKey? key)
+        {
+            for (int i = segments.Count - 1; i > 0; i--)
+            {
+                segments[i] = segments[i - 1];
+            }
+            PositionOfHead(key);
         }
 
         public bool Death()
         {
-            (int X, int Y) head = GetSegments().First();
+            (int X, int Y) head = segments.First();
 
-            for (int i = 2; i < GetSegments().Count; i++)
+            for (int i = 2; i < segments.Count; i++)
             {
-                if ((head.X == GetSegments()[i].X) && (head.Y == GetSegments()[i].Y)) return true;  
+                if (head.X == segments[i].X && head.Y == segments[i].Y)
+                {
+                    IsAlive = false; 
+                    return true;
+                }
             }
-            return false;
 
+            if (head.X == 1 || head.X == Area.XSizeOfArea - 2 || head.Y == 1 || head.Y == Area.YSizeOfArea - 2)
+            {
+                IsAlive = false; 
+                return true;
+            }
+
+            return false;
         }
-            
+
     }
 }

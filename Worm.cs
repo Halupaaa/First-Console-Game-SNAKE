@@ -1,23 +1,20 @@
-﻿using SkiaSharp;
+﻿using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace First_Console_Game_SNAKE
 {
-    abstract class Food
+    class Worm : Food
     {
-        public int X {  get; set; }
-        public int Y { get; set; }
+        //Unic Property eaten? snake slower
 
-        private Snake _snake;
-
+        private Snake snake;
         public void SetSnake(Snake snake)
         {
-            _snake = snake;
+            this.snake = snake;
         }
 
         public void GenerateFood()
@@ -27,21 +24,19 @@ namespace First_Console_Game_SNAKE
             {
                 X = random.Next(1, Area.XSizeOfArea - 1);
                 Y = random.Next(1, Area.YSizeOfArea - 1);
-            } while (_snake.segments.Any(segment => X == segment.X && Y == segment.Y));
-
+            } while (snake.segments.Any(segment => X == segment.X && Y == segment.Y));
         }
 
-        public virtual void DetectFoodEaten()
+        public override void DetectFoodEaten()
         {
-            (int X, int Y) head = _snake.segments.First();
+            (int X, int Y) head = snake.segments.First();
 
             if (head.X == X && head.Y == Y)
             {
+                snake.speed += 50;
                 GenerateFood();
-                _snake.AddSegment();
+                snake.AddSegment();
             }
         }
-
-
     }
 }
